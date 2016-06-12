@@ -1,7 +1,10 @@
 package pl.mrugames.mzcreeper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.Console;
 import java.util.Base64;
 import java.util.Scanner;
@@ -9,47 +12,26 @@ import java.util.prefs.Preferences;
 
 @Component
 public class AuthenticationManager {
-    private Preferences preferences;
+    private final Preferences preferences;
+    private final ApplicationContext context;
 
     private static final String YOUR_LOGIN_KEY = "login_key";
     private static final String YOUR_PASSWORD_KEY = "password_key";
 
-    public AuthenticationManager() {
+    @Autowired
+    public AuthenticationManager(ApplicationContext ac) {
         preferences = Preferences.userNodeForPackage(AuthenticationManager.class);
+        this.context = ac;
+    }
 
-        Console console = System.console();
-        Scanner scanner = null;
-
-        if (console == null) {
-            scanner = new Scanner(System.in);
-        }
-
+    @PostConstruct
+    private void postConstruct() {
         if (preferences.get(YOUR_LOGIN_KEY, null) == null) {
-            char[] login;
-            if (console != null) {
-                login = System.console().readPassword("Enter your MZ login: ");
-            } else {
-                System.out.print("Enter your MZ login: ");
-                login = scanner.nextLine().toCharArray();
-            }
-
-            save(YOUR_LOGIN_KEY, login);
+            save(YOUR_LOGIN_KEY, read("Enter your MZ login: "));
         }
 
         if (preferences.get(YOUR_PASSWORD_KEY, null) == null) {
-            char[] pass;
-            if (console != null) {
-                pass = System.console().readPassword("Enter your MZ password: ");
-            } else {
-                System.out.print("Enter your MZ password: ");
-                pass = scanner.nextLine().toCharArray();
-            }
-
-            save(YOUR_PASSWORD_KEY, pass);
-        }
-
-        if (scanner != null) {
-            scanner.close();
+            save(YOUR_PASSWORD_KEY, read("Enter your MZ password: "));
         }
     }
 
@@ -66,8 +48,22 @@ public class AuthenticationManager {
         preferences.remove(YOUR_PASSWORD_KEY);
     }
 
-    private void save(String key, char[] rawInput) {
-        String encoded = Base64.getEncoder().encodeToString(new String(rawInput).getBytes());
+    private void save(String key, String rawInput) {
+        String encoded = Base64.getEncoder().encodeToString(rawInput.getBytes());
         preferences.put(key, encoded);
+    }
+
+    private String read(String question) {
+        Console console = System.console();
+
+        if (console != null) {
+            char[] value = System.console().readPassword(question);
+            return new String(value);
+
+        }
+
+        Scanner scanner = (Scanner) context.getBean("SystemInScanner");
+        System.out.print(question);
+        return scanner.nextLine();
     }
 }
