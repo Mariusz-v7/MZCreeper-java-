@@ -21,6 +21,7 @@ public class MainPageParser implements Parser {
     private final Utils utils;
     private final AuthenticationManager authenticationManager;
 
+    private final static String LOGIN_CONTENT_ID = "login_form_content";
     private final static String LOGIN_FIELD_ID = "login_username";
     private final static String PASSWORD_FIELD_ID = "login_password";
     private final static String LOGIN_BUTTON_ID = "login";
@@ -39,13 +40,34 @@ public class MainPageParser implements Parser {
     }
 
     private void login() {
-        int timeoutSeconds = 30;
-
         logger.info("Performing login");
 
+        if (isUserLogged())
+            return;
+
+        fillAndSendForm();
+        waitForSubmitResult();
+
+        logger.info("Login successful");
+    }
+
+    private boolean isUserLogged() {
+        boolean isLoginFormPresent = webDriver.findElements(By.id(LOGIN_CONTENT_ID)).size() != 0;
+        if (!isLoginFormPresent) {
+            logger.info("Login form not found! User is probably logged on!");
+        }
+
+        return !isLoginFormPresent;
+    }
+
+    private void fillAndSendForm() {
         webDriver.findElement(By.id(LOGIN_FIELD_ID)).sendKeys(authenticationManager.getMZLogin());
         webDriver.findElement(By.id(PASSWORD_FIELD_ID)).sendKeys(authenticationManager.getMzPassword());
         webDriver.findElement(By.id(LOGIN_BUTTON_ID)).click();
+    }
+
+    private void waitForSubmitResult() {
+        int timeoutSeconds = 30;
 
         try {
             new WebDriverWait(webDriver, timeoutSeconds).until(
@@ -56,7 +78,5 @@ public class MainPageParser implements Parser {
             authenticationManager.reset();
             throw new FailedToLoginException(e);
         }
-
-        logger.info("Login successful");
     }
 }
