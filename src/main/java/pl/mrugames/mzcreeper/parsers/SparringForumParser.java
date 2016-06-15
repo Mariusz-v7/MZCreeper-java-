@@ -36,7 +36,7 @@ public class SparringForumParser implements Parser {
 
     @Override
     public void parse() {
-        if (friendlyMatchesManager.availableSlotsFromFriendlies() == 0)
+        if (friendlyMatchesManager.getDatesWithoutMatch().size() == 0)
             return;
 
         webDriver.get(Link.FORUM.getLink(FORUM_ID));

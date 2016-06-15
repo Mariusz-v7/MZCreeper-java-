@@ -1,14 +1,12 @@
 package pl.mrugames.mzcreeper;
 
-import pl.mrugames.mzcreeper.parsers.ChallengesParser;
-import pl.mrugames.mzcreeper.parsers.MainPageParser;
-import pl.mrugames.mzcreeper.parsers.Parser;
-import pl.mrugames.mzcreeper.parsers.SparringForumParser;
+import pl.mrugames.mzcreeper.parsers.*;
 
 public enum Link {
     MAIN_PAGE("http://www.managerzone.com/", MainPageParser.class),
     CHALLENGES("http://www.managerzone.com/?p=challenges", ChallengesParser.class),
-    FORUM("http://www.managerzone.com/?p=forum&sub=topics&forum_id=%s&sport=soccer", SparringForumParser.class);
+    FORUM("http://www.managerzone.com/?p=forum&sub=topics&forum_id=%s&sport=soccer", SparringForumParser.class),
+    MATCH_INVITATION_SENDER("http://www.managerzone.com/?p=team&sub=challenge&tid=%s", MatchInvitationSender.class);
 
     private final String link;
     private final Class<? extends Parser> parser;
