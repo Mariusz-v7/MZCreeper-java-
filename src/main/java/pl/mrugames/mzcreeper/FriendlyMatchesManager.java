@@ -34,6 +34,10 @@ public class FriendlyMatchesManager {
     }
 
     public List<LocalDateTime> getDatesWithoutMatch() {
+        return getDatesWithoutMatch(plannedDates);
+    }
+
+    public List<LocalDateTime> getDatesWithoutMatch(List<LocalDateTime> plannedDates) {
         if (plannedDates == null)
             throw new AssertionError("At first, please load your planned matches");
 
