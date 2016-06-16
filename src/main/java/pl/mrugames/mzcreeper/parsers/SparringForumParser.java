@@ -26,6 +26,7 @@ public class SparringForumParser implements Parser {
     private final static String TABLE_ID = "topics-list";
     private final static String AUTHOR_CELL_CLASS_NAME = "author-string";
     private final static Pattern PLAYER_ID_FROM_URL_PATTERN = Pattern.compile("uid=(.*?)$");
+    private final static int MAX_AMOUNT_OF_TARGETS_IN_A_ROW = 10;
 
 
     @Autowired
@@ -53,6 +54,7 @@ public class SparringForumParser implements Parser {
 
         List<String> targetsUrls = authors.stream()
                 .skip(1)  // skip first player who is game admin or something
+                .limit(MAX_AMOUNT_OF_TARGETS_IN_A_ROW)
                 .map(e -> e.findElements(By.tagName("a")))
                 .filter(list -> list.size() == 1)  // no <a> or more than one found? skip it.
                 .map(list -> list.get(0))

@@ -3,6 +3,7 @@ package pl.mrugames.mzcreeper.parsers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import pl.mrugames.mzcreeper.Link;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,7 @@ public class MatchInvitationSender implements Parser {
     private final static String TARGET_PLANNED_MATCHES_TABLE_ID = "booked_challenges_for_team";
     private final static int TARGET_PLANNED_MATCHES_DATE_COLUMN_INDEX = 2;
     private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    private final static String[] INVITATION_FORMS_IDS = { "chForm_0", "chForm_1" };
 
     @Autowired
     public MatchInvitationSender(WebDriver webDriver, FriendlyMatchesManager friendlyMatchesManager) {
@@ -57,14 +60,54 @@ public class MatchInvitationSender implements Parser {
         possibleTargetsIds.forEach(targetId -> {
             goToChallengesForm(targetId);
 
+            logger.info("Sending invitations to target {}. {} of {}", targetId, possibleTargetsIds.indexOf(targetId) + 1, possibleTargetsIds.size());
+
             List<LocalDateTime> targetPlannedMatches = loadTargetPlannedMatches();
             List<LocalDateTime> targetFreeSlots = friendlyMatchesManager.getDatesWithoutMatch(targetPlannedMatches);
 
-            if (targetFreeSlots.size() == 0)
+            if (targetFreeSlots.size() == 0) {
+                logger.info("Target {} has no free slots for friendly matches", targetId);
                 return;
+            }
 
-            // TODO: send invitations
+            List<LocalDateTime> availableSlots = new ArrayList<>(freeDateSlots);
+            availableSlots.removeAll(targetPlannedMatches);
+
+            if (availableSlots.size() == 0) {
+                logger.info("Target {} has no free slots that matches your free slots. He has {} free slots", targetId, targetFreeSlots.size());
+                return;
+            }
+
+            send(availableSlots);
         });
+    }
+
+    private void send(List<LocalDateTime> slots) {
+        String currentUrl = webDriver.getCurrentUrl();
+
+        slots.forEach(date -> {
+            String formId;
+            if (date.getHour() == friendlyMatchesManager.getHoursOnWhichMatchesArePlanned()[0]) {
+                formId = INVITATION_FORMS_IDS[0];
+            } else {
+                formId = INVITATION_FORMS_IDS[1];
+            }
+
+            WebElement form = webDriver.findElement(By.id(formId));
+            Select select = new Select(form.findElement(By.tagName("select")));
+
+            try {
+                select.selectByVisibleText(date.format(DATE_FORMATTER));
+            } catch (Exception e) {
+                logger.info("Could not find option for date {}. Target is probably from other country where are different hours.", date.format(DATE_FORMATTER));
+                return;
+            }
+
+            form.findElement(By.tagName("a")).click();
+
+            webDriver.get(currentUrl);
+        });
+
     }
 
     private void goToChallengesForm(long targetId) {

@@ -59,10 +59,16 @@ public class FriendlyMatchesManager {
         return possibleTargetsIds;
     }
 
+    public int[] getHoursOnWhichMatchesArePlanned() {
+        return HOURS_ON_WHICH_MATCHES_ARE_PLANNED;
+    }
+
     private List<LocalDateTime> getAllPossibleDatesInWeek() {
         List<LocalDateTime> dates = new LinkedList<>();
 
-        DAYS_WHEN_MATCHES_CAN_BE_PLANNED.forEach(day -> {
+        DAYS_WHEN_MATCHES_CAN_BE_PLANNED.stream()
+                .filter(day -> LocalDateTime.now().getDayOfWeek() != day)
+                .forEach(day -> {
             Arrays.stream(HOURS_ON_WHICH_MATCHES_ARE_PLANNED)
                     .forEach(hour -> dates.add(this.nextWeekDay(day, hour)));
         });
