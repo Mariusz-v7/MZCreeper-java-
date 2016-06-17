@@ -7,13 +7,12 @@ import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import pl.mrugames.mzcreeper.ConfigManager;
 import pl.mrugames.mzcreeper.FriendlyMatchesManager;
 import pl.mrugames.mzcreeper.Link;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,19 +24,19 @@ public class MatchInvitationSender implements Parser {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WebDriver webDriver;
     private final FriendlyMatchesManager friendlyMatchesManager;
+    private final ConfigManager configManager;
 
     private final static String CHALLENGE_IMAGE_URL = "http://static.managerzone.com/nocache-.*?/img/soccer/challenge_yes.gif";
     private final static String TARGET_PLANNED_MATCHES_TABLE_ID = "booked_challenges_for_team";
     private final static int TARGET_PLANNED_MATCHES_DATE_COLUMN_INDEX = 2;
     private final static String[] INVITATION_FORMS_IDS = { "chForm_0", "chForm_1" };
-    private final DateTimeFormatter DATE_FORMATTER;
 
     @Autowired
-    public MatchInvitationSender(WebDriver webDriver, FriendlyMatchesManager friendlyMatchesManager, Environment environment) {
-        this.webDriver = webDriver;
-        this.friendlyMatchesManager = friendlyMatchesManager;
+    public MatchInvitationSender(WebDriver wd, FriendlyMatchesManager fmm, ConfigManager cm) {
+        this.webDriver = wd;
+        this.friendlyMatchesManager = fmm;
+        this.configManager = cm;
 
-        DATE_FORMATTER = DateTimeFormatter.ofPattern(environment.getProperty("mz.date_time_format"));
     }
 
     @Override
@@ -90,7 +89,7 @@ public class MatchInvitationSender implements Parser {
 
         slots.forEach(date -> {
             String formId;
-            if (date.getHour() == friendlyMatchesManager.getHoursOnWhichMatchesArePlanned()[0]) {
+            if (date.getHour() == configManager.getHoursOfFriendlyMatches()[0]) {
                 formId = INVITATION_FORMS_IDS[0];
             } else {
                 formId = INVITATION_FORMS_IDS[1];
@@ -100,9 +99,9 @@ public class MatchInvitationSender implements Parser {
             Select select = new Select(form.findElement(By.tagName("select")));
 
             try {
-                select.selectByVisibleText(date.format(DATE_FORMATTER));
+                select.selectByVisibleText(date.format(configManager.getDateTimeFormatter()));
             } catch (Exception e) {
-                logger.info("Could not find option for date {}. Target is probably from other country where are different hours.", date.format(DATE_FORMATTER));
+                logger.info("Could not find option for date {}. Target is probably from other country where are different hours.", date.format(configManager.getDateTimeFormatter()));
                 return;
             }
 
@@ -136,7 +135,7 @@ public class MatchInvitationSender implements Parser {
                 .map(row -> row.findElements(By.tagName("td")))
                 .map(columns -> columns.get(TARGET_PLANNED_MATCHES_DATE_COLUMN_INDEX))
                 .map(WebElement::getText)
-                .map(date -> LocalDateTime.parse(date, DATE_FORMATTER))
+                .map(date -> LocalDateTime.parse(date, configManager.getDateTimeFormatter()))
                 .collect(Collectors.toList());
 
         return plannedDates;

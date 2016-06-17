@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +32,17 @@ public class Utils {
         } catch (IOException e) {
             logger.warn("Failed to save screenshot", e);
         }
+    }
+
+    public void waitForUrlChange() {
+        waitForUrlChange(webDriver.getCurrentUrl());
+    }
+
+    public void waitForUrlChange(String currentUrl) {
+        int timeoutSeconds = 30;
+
+        new WebDriverWait(webDriver, timeoutSeconds).until(
+                ExpectedConditions.not(ExpectedConditions.urlToBe(currentUrl))
+        );
     }
 }

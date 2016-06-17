@@ -2,8 +2,6 @@ package pl.mrugames.mzcreeper.parsers;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +65,8 @@ public class MainPageParser implements Parser {
     }
 
     private void waitForSubmitResult() {
-        int timeoutSeconds = 30;
-
         try {
-            new WebDriverWait(webDriver, timeoutSeconds).until(
-                    ExpectedConditions.not(ExpectedConditions.urlToBe(Link.MAIN_PAGE.getLink()))
-            );
+            utils.waitForUrlChange();
         } catch (Exception e) {
             logger.error("Failed to login");
             authenticationManager.reset();

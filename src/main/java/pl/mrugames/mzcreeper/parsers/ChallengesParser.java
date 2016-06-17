@@ -6,13 +6,12 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import pl.mrugames.mzcreeper.ConfigManager;
 import pl.mrugames.mzcreeper.FriendlyMatchesManager;
 import pl.mrugames.mzcreeper.Link;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,17 +21,16 @@ public class ChallengesParser implements Parser {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WebDriver webDriver;
     private final FriendlyMatchesManager friendlyMatchesManager;
+    private final ConfigManager configManager;
 
     private final static String PLANNED_MATCHES_TABLE_ID = "my_booked_friendlies";
     private final static int PLANED_MATCH_DATE_COLUMN_INDEX = 2;
-    private final DateTimeFormatter DATE_FORMATTER;
 
     @Autowired
-    public ChallengesParser(WebDriver webDriver, FriendlyMatchesManager fmm, Environment environment) {
+    public ChallengesParser(WebDriver webDriver, FriendlyMatchesManager fmm, ConfigManager cm) {
         this.webDriver = webDriver;
         this.friendlyMatchesManager = fmm;
-
-        DATE_FORMATTER = DateTimeFormatter.ofPattern(environment.getProperty("mz.date_time_format"));
+        this.configManager = cm;
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ChallengesParser implements Parser {
         return plannedMatchesRows.stream()
                 .map(row -> row.findElements(By.tagName("td")).get(PLANED_MATCH_DATE_COLUMN_INDEX))
                 .map(WebElement::getText)
-                .map(date -> LocalDateTime.parse(date, DATE_FORMATTER))
+                .map(date -> LocalDateTime.parse(date, configManager.getDateTimeFormatter()))
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 }
