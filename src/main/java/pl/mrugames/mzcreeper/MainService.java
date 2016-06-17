@@ -6,21 +6,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import pl.mrugames.mzcreeper.parsers.Parser;
-
-import java.util.Arrays;
 
 @Component
 public class MainService implements pl.mrugames.common.MainService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WebDriver webDriver;
-    private final Utils utils;
     private final ApplicationContext applicationContext;
+    private final TasksRunner tasksRunner;
 
     @Autowired
-    public MainService(WebDriver wd, Utils u, ApplicationContext ac) {
+    public MainService(WebDriver wd, TasksRunner tr, ApplicationContext ac) {
         this.webDriver = wd;
-        this.utils = u;
+        this.tasksRunner = tr;
         this.applicationContext = ac;
     }
 
@@ -28,7 +25,10 @@ public class MainService implements pl.mrugames.common.MainService {
         try {
             logger.info("MZCreeper is starting");
 
-            parseAll();
+            while (true) { // TODO - how to stop
+                Thread.sleep(10000);
+            }
+
         } catch (Exception e) {
             logger.error("Exception: ", e);
         } finally {
@@ -38,12 +38,5 @@ public class MainService implements pl.mrugames.common.MainService {
 
             logger.info("MZCreeper finished");
         }
-    }
-
-    private void parseAll() {
-        Arrays.stream(Link.values())
-                .map(Link::getParser)
-                .map(applicationContext::getBean)
-                .forEach(Parser::parse);
     }
 }

@@ -12,7 +12,7 @@ import pl.mrugames.mzcreeper.Utils;
 import pl.mrugames.mzcreeper.exceptions.FailedToLoginException;
 
 @Component
-public class MainPageParser implements Parser {
+public class AuthenticationParser implements Parser {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final WebDriver webDriver;
@@ -25,7 +25,7 @@ public class MainPageParser implements Parser {
     private final static String LOGIN_BUTTON_ID = "login";
 
     @Autowired
-    public MainPageParser(WebDriver webDriver, Utils utils, AuthenticationManager am) {
+    public AuthenticationParser(WebDriver webDriver, Utils utils, AuthenticationManager am) {
         this.webDriver = webDriver;
         this.utils = utils;
         this.authenticationManager = am;
@@ -33,7 +33,7 @@ public class MainPageParser implements Parser {
 
     @Override
     public void parse() {
-        webDriver.get(Link.MAIN_PAGE.getLink());
+        webDriver.get(Link.AUTHENTICATION.getLink());
         login();
     }
 

@@ -3,7 +3,7 @@ package pl.mrugames.mzcreeper;
 import pl.mrugames.mzcreeper.parsers.*;
 
 public enum Link {
-    MAIN_PAGE("http://www.managerzone.com/", MainPageParser.class),
+    AUTHENTICATION("http://www.managerzone.com/", AuthenticationParser.class),
     CHALLENGES("http://www.managerzone.com/?p=challenges", ChallengesParser.class),
     FORUM("http://www.managerzone.com/?p=forum&sub=topics&forum_id=%s&sport=soccer", SparringForumParser.class),
     PROFILE("http://www.managerzone.com/?p=profile&uid=%s", MatchInvitationSender.class),
