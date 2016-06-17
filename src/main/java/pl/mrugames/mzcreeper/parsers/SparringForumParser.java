@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import pl.mrugames.mzcreeper.FriendlyMatchesManager;
 import pl.mrugames.mzcreeper.Link;
@@ -26,13 +27,15 @@ public class SparringForumParser implements Parser {
     private final static String TABLE_ID = "topics-list";
     private final static String AUTHOR_CELL_CLASS_NAME = "author-string";
     private final static Pattern PLAYER_ID_FROM_URL_PATTERN = Pattern.compile("uid=(.*?)$");
-    private final static int MAX_AMOUNT_OF_TARGETS_IN_A_ROW = 10;
+    private final int MAX_AMOUNT_OF_TARGETS_IN_A_ROW;
 
 
     @Autowired
-    public SparringForumParser(WebDriver webDriver, FriendlyMatchesManager friendlyMatchesManager) {
+    public SparringForumParser(WebDriver webDriver, FriendlyMatchesManager friendlyMatchesManager, Environment environment) {
         this.webDriver = webDriver;
         this.friendlyMatchesManager = friendlyMatchesManager;
+
+        MAX_AMOUNT_OF_TARGETS_IN_A_ROW = Integer.parseInt(environment.getProperty("max_amount_of_targets_in_a_row"));
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import pl.mrugames.mzcreeper.FriendlyMatchesManager;
 import pl.mrugames.mzcreeper.Link;
@@ -28,13 +29,15 @@ public class MatchInvitationSender implements Parser {
     private final static String CHALLENGE_IMAGE_URL = "http://static.managerzone.com/nocache-.*?/img/soccer/challenge_yes.gif";
     private final static String TARGET_PLANNED_MATCHES_TABLE_ID = "booked_challenges_for_team";
     private final static int TARGET_PLANNED_MATCHES_DATE_COLUMN_INDEX = 2;
-    private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     private final static String[] INVITATION_FORMS_IDS = { "chForm_0", "chForm_1" };
+    private final DateTimeFormatter DATE_FORMATTER;
 
     @Autowired
-    public MatchInvitationSender(WebDriver webDriver, FriendlyMatchesManager friendlyMatchesManager) {
+    public MatchInvitationSender(WebDriver webDriver, FriendlyMatchesManager friendlyMatchesManager, Environment environment) {
         this.webDriver = webDriver;
         this.friendlyMatchesManager = friendlyMatchesManager;
+
+        DATE_FORMATTER = DateTimeFormatter.ofPattern(environment.getProperty("mz.date_time_format"));
     }
 
     @Override

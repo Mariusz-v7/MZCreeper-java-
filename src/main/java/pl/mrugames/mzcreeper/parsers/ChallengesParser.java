@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import pl.mrugames.mzcreeper.FriendlyMatchesManager;
 import pl.mrugames.mzcreeper.Link;
@@ -24,12 +25,14 @@ public class ChallengesParser implements Parser {
 
     private final static String PLANNED_MATCHES_TABLE_ID = "my_booked_friendlies";
     private final static int PLANED_MATCH_DATE_COLUMN_INDEX = 2;
-    private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    private final DateTimeFormatter DATE_FORMATTER;
 
     @Autowired
-    public ChallengesParser(WebDriver webDriver, FriendlyMatchesManager fmm) {
+    public ChallengesParser(WebDriver webDriver, FriendlyMatchesManager fmm, Environment environment) {
         this.webDriver = webDriver;
         this.friendlyMatchesManager = fmm;
+
+        DATE_FORMATTER = DateTimeFormatter.ofPattern(environment.getProperty("mz.date_time_format"));
     }
 
     @Override
