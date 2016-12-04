@@ -17,16 +17,10 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="MZCreeper" />
-      </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8">
-      <module name="MZCreeper" target="1.8" />
+    <bytecodeTargetLevel>
+      <module name="mz-creeper_main" target="1.8" />
+      <module name="mz-creeper_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

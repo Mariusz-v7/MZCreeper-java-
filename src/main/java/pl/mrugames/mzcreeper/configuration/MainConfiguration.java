@@ -1,4 +1,4 @@
-package pl.mrugames.mzcreeper;
+package pl.mrugames.mzcreeper.configuration;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -8,13 +8,19 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
+import pl.mrugames.common.CommonPackages;
 
 import java.util.Scanner;
 
 @Configuration
+@ComponentScan(basePackages = {
+        "pl.mrugames.mzcreeper",
+        CommonPackages.DATABASE
+})
 public class MainConfiguration {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

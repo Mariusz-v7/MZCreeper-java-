@@ -1,6 +1,7 @@
 package pl.mrugames.mzcreeper.parsers;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import pl.mrugames.mzcreeper.FriendlyMatchesManager;
 import pl.mrugames.mzcreeper.Link;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,12 +43,17 @@ public class ChallengesParser implements Parser {
     }
 
     private List<LocalDateTime> loadInfoAboutCurrentlyPlannedMatches() {
-        WebElement plannedMatchesTable = webDriver.findElement(By.id(PLANNED_MATCHES_TABLE_ID)).findElement(By.tagName("tbody"));
-        List<WebElement> plannedMatchesRows = plannedMatchesTable.findElements(By.tagName("tr"));
+        try {
+            WebElement plannedMatchesTable = webDriver.findElement(By.id(PLANNED_MATCHES_TABLE_ID));
+            WebElement tableBody = plannedMatchesTable.findElement(By.tagName("tbody"));
+            List<WebElement> plannedMatchesRows = tableBody.findElements(By.tagName("tr"));
 
-        logger.info("You have currently {} planned matches", plannedMatchesRows.size());
+            logger.info("You have currently {} planned matches", plannedMatchesRows.size());
 
-        return getDatesOfPlannedMatches(plannedMatchesRows);
+            return getDatesOfPlannedMatches(plannedMatchesRows);
+        } catch (NoSuchElementException e) {
+            return Collections.emptyList();
+        }
     }
 
     private List<LocalDateTime> getDatesOfPlannedMatches(List<WebElement> plannedMatchesRows) {

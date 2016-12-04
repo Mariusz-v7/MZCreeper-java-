@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MZCreeper.iml" filepath="$PROJECT_DIR$/MZCreeper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mz-creeper.iml" filepath="$PROJECT_DIR$/.idea/modules/mz-creeper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mz-creeper_main.iml" filepath="$PROJECT_DIR$/.idea/modules/mz-creeper_main.iml" group="mz-creeper" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mz-creeper_test.iml" filepath="$PROJECT_DIR$/.idea/modules/mz-creeper_test.iml" group="mz-creeper" />
     </modules>
   </component>
 </project>
