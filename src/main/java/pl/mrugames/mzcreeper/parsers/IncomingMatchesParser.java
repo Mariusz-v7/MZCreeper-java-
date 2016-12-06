@@ -47,39 +47,49 @@ public class IncomingMatchesParser implements Parser {
     }
 
     private void selectOnlyFriendlyMatches() {
+        logger.info("Selecting friendly matches only");
         WebElement form = webDriver.findElement(By.id(MATCHES_TYPE_FORM_ID));
         Select select = new Select(form.findElement(By.name(MATCHES_TYPE_SELECT_NAME)));
         select.selectByValue(FRIENDLY_MATCHES_OPTION_VALUE);
         utils.waitForUrlChange(Link.INCOMING_MATCHES.getLink());
+        logger.info("Done");
     }
 
     private void setTactics() {
+        logger.info("Setting tactics");
         WebElement form = webDriver.findElement(By.id(MATCHES_TACTICS_FORM_ID));
-        List<WebElement> rows = form.findElements(By.tagName("tr"));
-        rows.stream()
-                .skip(1)  // first row is empty
-                .forEach(row -> {
-                    List<WebElement> cells = row.findElements(By.tagName("td"));
-                    List<WebElement> dateElement = cells.get(DATE_CELL_INDEX).findElements(By.tagName("nobr"));
-                    if (dateElement.size() == 0)
-                        return;
+        List<WebElement> rows = form.findElements(By.tagName("select"));
+        logger.info("Found {} friendly matches", rows.size());
 
-                    LocalDateTime matchDate = LocalDateTime.parse(dateElement.get(0).getText(), configManager.getDateTimeFormatter());
-                    DayOfWeek dayOfMatch = matchDate.getDayOfWeek();
-                    String tactic = configManager.getTacticsForFriendlies().get(dayOfMatch);
+        rows.forEach(row -> {
+            String strMatchDateTime = getMatchDateTime(row);
+            logger.info("Match date is {}", strMatchDateTime);
 
-                    List<WebElement> selectElement = cells.get(TACTIC_SELECT_CELL_INDEX).findElements(By.tagName("select"));
-                    if (selectElement.size() == 0)
-                        return;
+            LocalDateTime matchDate = LocalDateTime.parse(strMatchDateTime, configManager.getDateTimeFormatter());
+            DayOfWeek dayOfMatch = matchDate.getDayOfWeek();
+            String tactic = configManager.getTacticsForFriendlies().get(dayOfMatch);
 
-                    Select select = new Select(selectElement.get(0));
+            Select select = new Select(row);
 
-                    logger.info("Setting tactic {} for match on {}", tactic, matchDate.format(configManager.getDateTimeFormatter()));
+            logger.info("Setting tactic {} for match on {}", tactic, matchDate.format(configManager.getDateTimeFormatter()));
 
-                    select.selectByVisibleText(tactic);
+            select.selectByVisibleText(tactic);
+        });
 
-                });
-
+        logger.info("Submitting");
         form.submit();
+        logger.info("Done");
+    }
+
+    private String getMatchDateTime(WebElement select) {
+        WebElement parent = select.findElement(By.xpath("../../../.."));
+        WebElement group = parent.findElement(By.xpath("preceding-sibling::*[@class='group'][1]"));
+        String date = group.getText();
+
+        parent = select.findElement(By.xpath("../.."));
+        WebElement timeContainer = parent.findElement(By.xpath("preceding-sibling::*[@class='match-link-wrapper'][1]"));
+        String time = timeContainer.getText();
+
+        return date + " " + time;
     }
 }
