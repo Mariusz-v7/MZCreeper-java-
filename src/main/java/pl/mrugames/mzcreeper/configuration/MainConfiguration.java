@@ -18,8 +18,7 @@ import java.util.Scanner;
 
 @Configuration
 @ComponentScan(basePackages = {
-        "pl.mrugames.mzcreeper",
-        CommonPackages.DATABASE
+        "pl.mrugames.mzcreeper"
 })
 public class MainConfiguration {
     private final Logger logger = LoggerFactory.getLogger(getClass());
