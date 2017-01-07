@@ -1,6 +1,9 @@
 group 'pl.mrugames'
 version '1.0-SNAPSHOT'
 
+project.description = 'MZ Creeper'
+project.ext.executable_root_dir = '/home/mariusz/apps/mzcreeper'
+
 def localRepo = '../MruGamesRepo/'
 apply from: localRepo + 'common.gradle'
 

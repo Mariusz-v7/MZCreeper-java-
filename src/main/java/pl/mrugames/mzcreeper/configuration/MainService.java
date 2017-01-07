@@ -8,12 +8,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import pl.mrugames.mzcreeper.TasksRunner;
 
+import java.io.StreamTokenizer;
+
 @Component
 public class MainService implements pl.mrugames.common.MainService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WebDriver webDriver;
     private final ApplicationContext applicationContext;
     private final TasksRunner tasksRunner;
+    private volatile boolean shutdown = false;
 
     @Autowired
     public MainService(WebDriver wd, TasksRunner tr, ApplicationContext ac) {
@@ -26,18 +29,29 @@ public class MainService implements pl.mrugames.common.MainService {
         try {
             logger.info("MZCreeper is starting");
 
-            while (true) { // TODO - how to stop
+            while (!shutdown) {
                 Thread.sleep(10000);
             }
 
         } catch (Exception e) {
             logger.error("Exception: ", e);
         } finally {
-            logger.info("Closing WebDriver...");
-            webDriver.quit();
-            logger.info("WebDriver closed");
-
             logger.info("MZCreeper finished");
         }
+    }
+
+    @Override
+    public void shutDown() {
+        shutdown = true;
+    }
+
+    @Override
+    public String command(StreamTokenizer streamTokenizer) {
+        return "not supported";
+    }
+
+    @Override
+    public String status() {
+        return "running: " + !shutdown;
     }
 }

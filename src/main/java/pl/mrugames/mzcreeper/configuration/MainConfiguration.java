@@ -32,7 +32,7 @@ public class MainConfiguration {
         return desiredCapabilities;
     }
 
-    @Bean
+    @Bean(destroyMethod = "quit")
     public WebDriver webDriver(DesiredCapabilities desiredCapabilities) {
         PhantomJSDriver driver = new PhantomJSDriver(desiredCapabilities);
         driver.manage().window().setSize(new Dimension(1366, 768));

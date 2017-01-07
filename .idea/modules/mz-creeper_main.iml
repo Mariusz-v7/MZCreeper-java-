@@ -33,6 +33,7 @@
     <orderEntry type="library" name="Gradle: org.freemarker:freemarker:2.3.23" level="project" />
     <orderEntry type="library" name="Gradle: io.reactivex:rxjava:1.2.2" level="project" />
     <orderEntry type="library" name="Gradle: com.sun.el:el-ri:1.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-beans:4.3.4.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-context:4.3.4.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-core:4.3.4.RELEASE" level="project" />
