@@ -11,10 +11,7 @@
       <option name="taskNames">
         <list>
           <option value="clean" />
-          <option value="build" />
-          <option value="shadowJar" />
-          <option value="uploadArchives" />
-          <option value="buildInstallationScripts" />
+          <option value="make" />
         </list>
       </option>
       <option name="vmOptions" value="" />
