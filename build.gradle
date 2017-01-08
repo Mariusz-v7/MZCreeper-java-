@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 project.description = 'MZ Creeper'
 project.ext.executable_root_dir = '/home/mariusz/apps/mzcreeper'
+project.ext.max_memory_megabytes = 20
 
 def localRepo = '../MruGamesRepo/'
 apply from: localRepo + 'common.gradle'
