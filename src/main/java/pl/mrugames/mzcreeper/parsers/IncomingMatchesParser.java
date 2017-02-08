@@ -87,7 +87,7 @@ public class IncomingMatchesParser implements Parser {
         String date = group.getText();
 
         parent = select.findElement(By.xpath("../.."));
-        WebElement timeContainer = parent.findElement(By.xpath("preceding-sibling::*[@class='match-link-wrapper'][1]"));
+        WebElement timeContainer = parent.findElement(By.xpath("preceding-sibling::*[@class='responsive-hide match-time match-reference-type']"));
         String time = timeContainer.getText();
 
         return date + " " + time;
