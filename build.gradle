@@ -6,9 +6,10 @@ project.ext.executable_root_dir = '/home/mariusz/apps/mzcreeper'
 project.ext.max_memory_megabytes = 20
 project.ext.remote_deploy_host = ''
 project.ext.remote_deploy_user = ''
+project.ext.main_class = 'pl.mrugames.common.Main'
 
 def localRepo = '../MruGamesRepo/'
-apply from: localRepo + 'common.gradle'
+apply from: localRepo + 'commons.gradle'
 
 dependencies {
     compile group: 'pl.mrugames', name: 'mrugames-commons', version:'2.1.0'
