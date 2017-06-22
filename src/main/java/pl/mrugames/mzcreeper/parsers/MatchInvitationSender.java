@@ -99,13 +99,21 @@ public class MatchInvitationSender implements Parser {
             Select select = new Select(form.findElement(By.tagName("select")));
 
             try {
-                select.selectByVisibleText(date.format(configManager.getDateTimeFormatter()));
+               String datStr = date.format(configManager.getDateTimeFormatter()) ;
+                logger.info("- sending invitation to date: {}", datStr);
+                select.selectByVisibleText(datStr);
             } catch (Exception e) {
                 logger.info("Could not find option for date {}. Target is probably from other country where are different hours.", date.format(configManager.getDateTimeFormatter()));
                 return;
             }
 
             form.findElement(By.tagName("a")).click();
+
+            try {
+                Thread.sleep(5000);  // wait for async call (ajax is fired later, after page load)
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             webDriver.get(currentUrl);
         });
