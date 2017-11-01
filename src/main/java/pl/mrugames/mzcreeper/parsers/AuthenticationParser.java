@@ -19,7 +19,7 @@ public class AuthenticationParser implements Parser {
     private final Utils utils;
     private final AuthenticationManager authenticationManager;
 
-    private final static String LOGIN_CONTENT_ID = "login_form_content";
+    private final static String LOGIN_CONTENT_ID = "login-form-wrapper";
     private final static String LOGIN_FIELD_ID = "login_username";
     private final static String PASSWORD_FIELD_ID = "login_password";
     private final static String LOGIN_BUTTON_ID = "login";

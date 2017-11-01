@@ -8,16 +8,13 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
 import java.util.Scanner;
 
 @Configuration
-@ComponentScan("pl.mrugames")
+@ComponentScan(basePackages = "pl.mrugames")
 public class MainConfiguration {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
