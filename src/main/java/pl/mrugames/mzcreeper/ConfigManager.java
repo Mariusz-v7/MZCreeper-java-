@@ -1,6 +1,8 @@
 package pl.mrugames.mzcreeper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +20,14 @@ public class ConfigManager {
     private final EnumMap<DayOfWeek, String> tacticsForFriendlies = new EnumMap<>(DayOfWeek.class);
 
     @Autowired
-    public ConfigManager(Environment environment) {
-        DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(environment.getProperty("mz.date_time_format"));
+    ConfigManager(@Value("${mz.date_time_format}") String dateTimeFormat,
+                  @Value("${hours_of_matches_planned}") String hours,
+                  @Value("${days_to_plan_matches}") String days,
+                  ApplicationContext context) {
+        DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(dateTimeFormat);
 
-        String[] strHours = environment.getProperty("hours_of_matches_planned").split(",");
-        String[] strDays = environment.getProperty("days_to_plan_matches").split(",");
+        String[] strHours = hours.split(",");
+        String[] strDays = days.split(",");
 
         HOURS_ON_WHICH_MATCHES_ARE_PLANNED = new int[strHours.length];
 
@@ -37,7 +42,7 @@ public class ConfigManager {
 
         DAYS_WHEN_MATCHES_CAN_BE_PLANNED = EnumSet.copyOf(Arrays.asList(dayOfWeeks));
 
-        DAYS_WHEN_MATCHES_CAN_BE_PLANNED.forEach(day -> tacticsForFriendlies.put(day, environment.getProperty(String.format("friendly_tactics.%s", day))));
+        DAYS_WHEN_MATCHES_CAN_BE_PLANNED.forEach(day -> tacticsForFriendlies.put(day, context.getEnvironment().getProperty(String.format("friendly_tactics.%s", day))));
     }
 
     public EnumSet<DayOfWeek> getDaysWhenMatchesCanBePlayed() {

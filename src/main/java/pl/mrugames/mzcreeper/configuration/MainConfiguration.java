@@ -7,27 +7,30 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
-import pl.mrugames.common.CommonPackages;
 
 import java.util.Scanner;
 
 @Configuration
-@ComponentScan(basePackages = {
-        "pl.mrugames.mzcreeper"
-})
+@ComponentScan("pl.mrugames")
 public class MainConfiguration {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Bean
-    public DesiredCapabilities desiredCapabilities(Environment environment) {
+    public DesiredCapabilities desiredCapabilities(@Value("${webdriver.path}") String webDriverPath, @Value("${webdriver.user_agent}") String userAgent) {
+        String system = System.getProperty("os.name");
+        if (system.contains("Windows")) {
+            webDriverPath += ".exe";
+        }
+
         DesiredCapabilities desiredCapabilities = DesiredCapabilities.phantomjs();
-        desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, environment.getProperty("webdriver.path"));
-        desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "userAgent", environment.getProperty("webdriver.user_agent"));
+        desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, webDriverPath);
+        desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "userAgent", userAgent);
 
         return desiredCapabilities;
     }
